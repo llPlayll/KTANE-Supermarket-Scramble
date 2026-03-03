@@ -285,14 +285,14 @@ public class supermarketScramble : MonoBehaviour
         var commandArgs = Command.Split(new[] { ' ' }, 3);
         if (commandArgs.Length < 1)
         {
-            yield return "sendtochatmessage No command supplied!";
+            yield return "sendtochaterror No command supplied!";
         }
         switch (commandArgs[0])
         {
             case "select":
                 if (moduleStarted)
                 {
-                    yield return "sendtochatmessage Module already started!";
+                    yield return "sendtochaterror Module already started!";
                 }
                 else
                 {
@@ -306,7 +306,7 @@ public class supermarketScramble : MonoBehaviour
             case "list":
                 if (!moduleStarted)
                 {
-                    yield return "sendtochatmessage Module not started!";
+                    yield return "sendtochaterror Module not started!";
                 }
                 else
                 {
@@ -323,11 +323,11 @@ public class supermarketScramble : MonoBehaviour
             case "r":
                 if (!moduleStarted)
                 {
-                    yield return "sendtochatmessage Module not started!";
+                    yield return "sendtochaterror Module not started!";
                 }
                 else if (listView)
                 {
-                    yield return "sendtochatmessage You are currently viewing the list!";
+                    yield return "sendtochaterror You are currently viewing the list!";
                 }
                 else
                 {
@@ -337,12 +337,12 @@ public class supermarketScramble : MonoBehaviour
                         bool tryParse = Int32.TryParse(commandArgs[1], out TPTimes);
                         if (!tryParse)
                         {
-                            yield return "sendtochatmessage Invalid amount of times!";
+                            yield return "sendtochaterror Invalid amount of times!";
                         }
                     }
                     else if (commandArgs.Length > 2)
                     {
-                        yield return "sendtochatmessage Command too long!";
+                        yield return "sendtochaterror Command too long!";
                     }
 
                     int TPDir = TPDirList.IndexOf(commandArgs[0]) % 2;
@@ -359,21 +359,21 @@ public class supermarketScramble : MonoBehaviour
             case "inspect":
                 if (listView)
                 {
-                    yield return "sendtochatmessage You are currently viewing the list!";
+                    yield return "sendtochaterror You are currently viewing the list!";
                 }
                 else if (curAisle == -1)
                 {
-                    yield return "sendtochatmessage You are at the checkout lane!";
+                    yield return "sendtochaterror You are at the checkout lane!";
                 }
                 else
                 {
                     if (commandArgs.Length < 2)
                     {
-                        yield return "sendtochatmessage Command too short!";
+                        yield return "sendtochaterror Command too short!";
                     }
                     else if (commandArgs.Length > 2)
                     {
-                        yield return "sendtochatmessage Command too long!";
+                        yield return "sendtochaterror Command too long!";
                     }
                     else
                     {
@@ -381,11 +381,11 @@ public class supermarketScramble : MonoBehaviour
                         bool tryParse = Int32.TryParse(commandArgs[1], out TPButtonIdx);
                         if (!tryParse)
                         {
-                            yield return "sendtochatmessage Invalid button number!";
+                            yield return "sendtochaterror Invalid button number!";
                         }
                         else if (TPButtonIdx < 1 || TPButtonIdx > Aisles[curAisle].transform.childCount)
                         {
-                            yield return "sendtochatmessage Button number not in range!";
+                            yield return "sendtochaterror Button number not in range!";
                         }
                         else
                         {
@@ -403,52 +403,55 @@ public class supermarketScramble : MonoBehaviour
             case "put":
                 if (listView)
                 {
-                    yield return "sendtochatmessage You are currently viewing the list!";
+                    yield return "sendtochaterror You are currently viewing the list!";
                 }
                 else if (curAisle == -1)
                 {
-                    yield return "sendtochatmessage You are at the checkout lane!";
-                }
-                if (commandArgs.Length < 3)
-                {
-                    yield return "sendtochatmessage Command too short!";
-                }
-                else if (commandArgs.Length > 3)
-                {
-                    yield return "sendtochatmessage Command too long!";
+                    yield return "sendtochaterror You are at the checkout lane!";
                 }
                 else
                 {
-                    int TPItemIdx;
-                    bool tryParseItem = Int32.TryParse(commandArgs[1], out TPItemIdx);
-                    if (!tryParseItem)
+                    if (commandArgs.Length < 3)
                     {
-                        yield return "sendtochatmessage Invalid item number!";
+                        yield return "sendtochaterror Command too short!";
                     }
-                    else if (TPItemIdx < 1 || TPItemIdx > Aisles[curAisle].transform.childCount)
+                    else if (commandArgs.Length > 3)
                     {
-                        yield return "sendtochatmessage Button number not in range!";
+                        yield return "sendtochaterror Command too long!";
                     }
                     else
                     {
-                        int TPSlotIdx;
-                        bool tryParseSlot = Int32.TryParse(commandArgs[2], out TPSlotIdx);
-                        if (!tryParseSlot)
+                        int TPItemIdx;
+                        bool tryParseItem = Int32.TryParse(commandArgs[1], out TPItemIdx);
+                        if (!tryParseItem)
                         {
-                            yield return "sendtochatmessage Invalid slot number!";
+                            yield return "sendtochaterror Invalid item number!";
                         }
-                        else if (TPSlotIdx < 1 || TPSlotIdx > 8)
+                        else if (TPItemIdx < 1 || TPItemIdx > Aisles[curAisle].transform.childCount)
                         {
-                            yield return "sendtochatmessage Slot number not in range!";
+                            yield return "sendtochaterror Button number not in range!";
                         }
                         else
                         {
-                            GetComponent<KMSelectable>().OnFocus();
-                            yield return null;
-                            Aisles[curAisle].transform.GetChild(TPItemIdx - 1).GetComponent<KMSelectable>().OnInteract();
-                            yield return new WaitForSeconds(0.1f);
-                            SlotButtons[TPSlotIdx - 1].OnInteract();
-                            SlotButtons[TPSlotIdx - 1].OnHighlightEnded();
+                            int TPSlotIdx;
+                            bool tryParseSlot = Int32.TryParse(commandArgs[2], out TPSlotIdx);
+                            if (!tryParseSlot)
+                            {
+                                yield return "sendtochaterror Invalid slot number!";
+                            }
+                            else if (TPSlotIdx < 1 || TPSlotIdx > 8)
+                            {
+                                yield return "sendtochaterror Slot number not in range!";
+                            }
+                            else
+                            {
+                                GetComponent<KMSelectable>().OnFocus();
+                                yield return null;
+                                Aisles[curAisle].transform.GetChild(TPItemIdx - 1).GetComponent<KMSelectable>().OnInteract();
+                                yield return new WaitForSeconds(0.1f);
+                                SlotButtons[TPSlotIdx - 1].OnInteract();
+                                SlotButtons[TPSlotIdx - 1].OnHighlightEnded();
+                            }
                         }
                     }
                 }
@@ -457,39 +460,41 @@ public class supermarketScramble : MonoBehaviour
             case "slot":
                 if (listView)
                 {
-                    yield return "sendtochatmessage You are currently viewing the list!";
-                }
-
-                if (commandArgs.Length < 2)
-                {
-                    yield return "sendtochatmessage Command too short!";
-                }
-                else if (commandArgs.Length > 2)
-                {
-                    yield return "sendtochatmessage Command too long!";
+                    yield return "sendtochaterror You are currently viewing the list!";
                 }
                 else
                 {
-                    int TPSlotIdx;
-                    bool tryParseSlot = Int32.TryParse(commandArgs[1], out TPSlotIdx);
-                    if (tryParseSlot)
+                    if (commandArgs.Length < 2)
                     {
-                        if (TPSlotIdx < 1 || TPSlotIdx > 8)
-                        {
-                            yield return "sendtochatmessage Slot number not in range!";
-                        }
-                        else
-                        {
-                            GetComponent<KMSelectable>().OnFocus();
-                            yield return null;
-                            SlotButtons[TPSlotIdx - 1].GetComponent<KMSelectable>().OnSelect();
-                            yield return new WaitForSeconds(1f);
-                            SlotButtons[TPSlotIdx - 1].GetComponent<KMSelectable>().OnHighlightEnded();
-                        }  
+                        yield return "sendtochaterror Command too short!";
+                    }
+                    else if (commandArgs.Length > 2)
+                    {
+                        yield return "sendtochaterror Command too long!";
                     }
                     else
                     {
-                        yield return "sendtochatmessage Invalid slot number!";
+                        int TPSlotIdx;
+                        bool tryParseSlot = Int32.TryParse(commandArgs[1], out TPSlotIdx);
+                        if (tryParseSlot)
+                        {
+                            if (TPSlotIdx < 1 || TPSlotIdx > 8)
+                            {
+                                yield return "sendtochaterror Slot number not in range!";
+                            }
+                            else
+                            {
+                                GetComponent<KMSelectable>().OnFocus();
+                                yield return null;
+                                SlotButtons[TPSlotIdx - 1].GetComponent<KMSelectable>().OnSelect();
+                                yield return new WaitForSeconds(1f);
+                                SlotButtons[TPSlotIdx - 1].GetComponent<KMSelectable>().OnHighlightEnded();
+                            }
+                        }
+                        else
+                        {
+                            yield return "sendtochaterror Invalid slot number!";
+                        }
                     }
                 }
                 GetComponent<KMSelectable>().OnDefocus();
@@ -497,15 +502,15 @@ public class supermarketScramble : MonoBehaviour
             case "solvebutton":
                 if (listView)
                 {
-                    yield return "sendtochatmessage You are currently viewing the list!";
+                    yield return "sendtochaterror You are currently viewing the list!";
                 }
                 else if (curAisle != -1)
                 {
-                    yield return "sendtochatmessage You are not at the checkout lane!";
+                    yield return "sendtochaterror You are not at the checkout lane!";
                 }
                 else if (!success)
                 {
-                    yield return "sendtochatmessage Solve button unavailable!";
+                    yield return "sendtochaterror Solve button unavailable!";
                 }
                 else
                 {
@@ -517,7 +522,7 @@ public class supermarketScramble : MonoBehaviour
                 GetComponent<KMSelectable>().OnDefocus();
                 break;
             default:
-                yield return "sendtochatmessage Invalid command!";
+                yield return "sendtochaterror Invalid command!";
                 break;
         }
         yield return null;
