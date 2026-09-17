@@ -282,7 +282,7 @@ public class supermarketScramble : MonoBehaviour
 
     IEnumerator ProcessTwitchCommand(string Command)
     {
-        var commandArgs = Command.Split(new[] { ' ' }, 3);
+        var commandArgs = Command.ToLowerInvariant().Split(new[] { ' ' }, 3);
         if (commandArgs.Length < 1)
         {
             yield return "sendtochaterror No command supplied!";

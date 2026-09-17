@@ -26,6 +26,6 @@ MonoBehaviour:
     Original Supermarket Scramble made by Robin. If you have Escape Simulator, you
     should definitely check out the Supermarket Scramble room by yourself in solo
     or with a friend in versus mode! <3'
-  version: 1.05
+  version: 1.06
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 8c34abf9fe2f94144b90a519b6efd8d8, type: 3}
